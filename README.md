@@ -5,7 +5,7 @@ A simple Ruby library built to handle the easy conversion and manipulation of co
 
 Example
 ===
-
+```ruby
   require "rgb"
   
   # Supported input data color formas:
@@ -44,7 +44,7 @@ Example
   => [0, 1.0, 0.5]
   color.to_rgb
   => [115, 38, 38]
-
+```
 
 Resources
 ===
