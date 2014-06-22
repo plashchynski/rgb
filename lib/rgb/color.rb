@@ -97,6 +97,8 @@ module RGB
 
     def darken!(amount)
       @l -= (amount / 100.0)
+      @l = 0 if @l < 0
+      @l
     end
 
     def darken_percent!(percentage)
