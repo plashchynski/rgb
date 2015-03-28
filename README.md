@@ -1,11 +1,11 @@
-rgb — Easy conversion and manipulation of colors
+rgb — Easy colors manipulation
 ------------------------
 
 A simple Ruby library built to handle the easy conversion and manipulation of colors. Inspired by compass-colors https://github.com/chriseppstein/compass-colors and jColour.js https://github.com/lingo/jcolour.
 
 ## Examples
 ```ruby
-require "rgb"
+require 'rgb'
 
 # Supported input data color formas:
 color = RGB::Color.from_rgb_hex("#333333")
