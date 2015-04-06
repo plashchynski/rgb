@@ -8,24 +8,25 @@ module RGB
       from_rgb(*rgb)
     end
 
+    def self.calc_saturation(max_rgb, min_rgb, delta, lightness)
+      if lightness < 0.5
+        delta / (max_rgb + min_rgb)
+      else
+        delta / (2 - max_rgb - min_rgb)
+      end
+    end
+
     def self.from_rgb(*rgb)
       rgb.map!{ |c| c / 255.0 }
-      min_rgb = rgb.min
-      max_rgb = rgb.max
+      min_rgb, max_rgb = rgb.min, rgb.max
       delta = max_rgb - min_rgb
 
       lightness = (max_rgb + min_rgb) / 2.0
 
       if delta < 1e-5
-        hue = 0
-        saturation = 0
+        hue = saturation = 0
       else
-        saturation = if lightness < 0.5
-          delta / (max_rgb + min_rgb)
-        else
-          delta / (2 - max_rgb - min_rgb)
-        end
-
+        saturation = calc_saturation(max_rgb, min_rgb, delta, lightness)
         deltas = rgb.map{ |c| (((max_rgb - c) / 6.0) + (delta / 2.0)) / delta }
 
         hue = if (rgb[0] - max_rgb).abs < 1e-5
@@ -51,9 +52,19 @@ module RGB
     end
 
     def to_rgb
-      m2 = lightness <= 0.5 ? lightness * (saturation + 1) : lightness + saturation - lightness * saturation
+      m2 = if lightness <= 0.5
+        lightness * (saturation + 1)
+      else
+        lightness + saturation - lightness * saturation
+      end
+
       m1 = lightness * 2 - m2
-      [hue_to_rgb(m1, m2, hp + 1.0/3), hue_to_rgb(m1, m2, hp), hue_to_rgb(m1, m2, hp - 1.0/3)].map { |c| (c * 0xff).round }
+
+      [
+        hue_to_rgb(m1, m2, hue_percentage + 1.0 / 3),
+        hue_to_rgb(m1, m2, hue_percentage),
+        hue_to_rgb(m1, m2, hue_percentage - 1.0 / 3)
+      ].map { |c| (c * 0xff).round }
     end
 
     def to_hsl
@@ -131,8 +142,7 @@ module RGB
     end
 
   private
-    # hue as a percentage
-    def hp
+    def hue_percentage
       hue / 360.0
     end
 
