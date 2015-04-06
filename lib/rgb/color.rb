@@ -1,15 +1,15 @@
 module RGB
   class Color
-    attr_reader :h, :s, :l
+    attr_reader :hue, :saturation, :lightness # HSL
 
     def self.from_rgb_hex(color)
       color = "#%.6x" % color if color.is_a? Integer
-      rgb = color[1,7].scan(/.{2}/).map{|component| component.to_i(16)}
+      rgb = color[1,7].scan(/.{2}/).map{ |component| component.to_i(16) }
       from_rgb(*rgb)
     end
 
     def self.from_rgb(*rgb)
-      rgb.map!{|c| c / 255.0}
+      rgb.map!{ |c| c / 255.0 }
       min_rgb = rgb.min
       max_rgb = rgb.max
       delta = max_rgb - min_rgb
@@ -20,21 +20,22 @@ module RGB
         hue = 0
         saturation = 0
       else
-        saturation = if ( lightness < 0.5 )
-          delta / ( max_rgb + min_rgb )
+        saturation = if lightness < 0.5
+          delta / (max_rgb + min_rgb)
         else
-         delta / ( 2 - max_rgb - min_rgb )
+          delta / (2 - max_rgb - min_rgb)
         end
 
-        deltas = rgb.map{|c| (((max_rgb - c) / 6.0) + (delta / 2.0)) / delta}
+        deltas = rgb.map{ |c| (((max_rgb - c) / 6.0) + (delta / 2.0)) / delta }
 
         hue = if (rgb[0] - max_rgb).abs < 1e-5
-         deltas[2] - deltas[1]
+          deltas[2] - deltas[1]
         elsif (rgb[1] - max_rgb).abs < 1e-5
-         ( 1.0 / 3.0 ) + deltas[0] - deltas[2]
+          (1.0 / 3.0) + deltas[0] - deltas[2]
         else
-         ( 2.0 / 3.0 ) + deltas[1] - deltas[0]
+          (2.0 / 3.0) + deltas[1] - deltas[0]
         end
+
         hue += 1 if hue < 0
         hue -= 1 if hue > 1
       end
@@ -46,79 +47,79 @@ module RGB
     end
 
     def initialize(*hsl)
-      self.h, self.s, self.l = hsl
+      self.hue, self.saturation, self.lightness = hsl
     end
 
     def to_rgb
-      m2 = l <= 0.5 ? l * (s + 1) : l + s - l * s
-      m1 = l * 2 - m2
+      m2 = lightness <= 0.5 ? lightness * (saturation + 1) : lightness + saturation - lightness * saturation
+      m1 = lightness * 2 - m2
       [hue_to_rgb(m1, m2, hp + 1.0/3), hue_to_rgb(m1, m2, hp), hue_to_rgb(m1, m2, hp - 1.0/3)].map { |c| (c * 0xff).round }
     end
 
     def to_hsl
-      [h,s,l]
+      [hue, saturation, lightness]
     end
 
     def to_rgb_hex
       "#" + to_rgb.map {|c| "%02X" % c }.join
     end
 
-    def h=(hue)
-      @h = hue % 360
+    def hue=(value)
+      @hue = value % 360
     end
 
-    def s=(saturation)
-      @s = if saturation < 0
+    def saturation=(value)
+      @saturation = if value < 0
         0.0
-      elsif saturation > 1
+      elsif value > 1
         1.0
       else
-        saturation
+        value
       end
     end
 
-    def l=(lightness)
-      @l = if lightness < 0
+    def lightness=(value)
+      @lightness = if value < 0
         0.0
-      elsif lightness > 1
+      elsif value > 1
         1.0
       else
-        lightness
+        value
       end
     end
 
     def lighten!(amount)
-      @l += amount / 100.0
+      @lightness += amount / 100.0
     end
 
     def lighten_percent!(percentage)
-      @l += (1 - @l) * (percentage / 100.0)
+      @lightness += (1 - @lightness) * (percentage / 100.0)
     end
 
     def darken!(amount)
-      @l -= (amount / 100.0)
-      @l = 0 if @l < 0
-      @l
+      @lightness -= (amount / 100.0)
+      @lightness = 0 if @lightness < 0
+      @lightness
     end
 
     def darken_percent!(percentage)
-      @l *= 1.0 - (percentage / 100.0)
+      @lightness *= 1.0 - (percentage / 100.0)
     end
 
     def saturate!(amount)
-      @s += amount / 100.0
+      @saturation += amount / 100.0
     end
 
     def saturate_percent!(percentage)
-      @s += (1 - @s) * (percentage / 100.0)
+      @saturation += (1 - @saturation) * (percentage / 100.0)
     end
 
     def desaturate!(amount)
-      @s -= amount / 100.0
+      @saturation -= amount / 100.0
     end
 
     def desaturate_percent!(percentage)
-      @s *= (1.0 - (percentage / 100.0))
+      @saturation *= (1.0 - (percentage / 100.0))
     end
 
     # define non-bang methods
@@ -130,9 +131,9 @@ module RGB
     end
 
   private
-    #hue as a percentage
+    # hue as a percentage
     def hp
-      h / 360.0
+      hue / 360.0
     end
 
     # helper for making rgb

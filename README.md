@@ -33,10 +33,10 @@ color.desaturate_percent(20)
 color.desaturate!(20)
 color.desaturate_percent!(20)
 
-# Also you can adjust color hue, saturation, and lightness values manually:
-color.h = 0.1
-color.s = 0.2
-color.l = 0.3
+# Also you can adjust color HSL (hue, saturation, and lightness values) manually:
+color.hue = 0.1
+color.saturation = 0.2
+color.lightness = 0.3
 
 # Supported output formats:
 color.to_rgb_hex
