@@ -2,49 +2,51 @@ module RGB
   class Color
     attr_reader :hue, :saturation, :lightness # HSL
 
-    def self.from_rgb_hex(color)
-      color = "#%.6x" % color if color.is_a? Integer
-      rgb = color[1,7].scan(/.{2}/).map{ |component| component.to_i(16) }
-      from_rgb(*rgb)
-    end
-
-    def self.calc_saturation(max_rgb, min_rgb, delta, lightness)
-      if lightness < 0.5
-        delta / (max_rgb + min_rgb)
-      else
-        delta / (2 - max_rgb - min_rgb)
+    class << self
+      def from_rgb_hex(color)
+        color = '#%.6x' % color if color.is_a? Integer
+        rgb = color[1,7].scan(/.{2}/).map{ |component| component.to_i(16) }
+        from_rgb(*rgb)
       end
-    end
 
-    def self.from_rgb(*rgb)
-      rgb.map!{ |c| c / 255.0 }
-      min_rgb, max_rgb = rgb.min, rgb.max
-      delta = max_rgb - min_rgb
-
-      lightness = (max_rgb + min_rgb) / 2.0
-
-      if delta < 1e-5
-        hue = saturation = 0
-      else
-        saturation = calc_saturation(max_rgb, min_rgb, delta, lightness)
-        deltas = rgb.map{ |c| (((max_rgb - c) / 6.0) + (delta / 2.0)) / delta }
-
-        hue = if (rgb[0] - max_rgb).abs < 1e-5
-          deltas[2] - deltas[1]
-        elsif (rgb[1] - max_rgb).abs < 1e-5
-          (1.0 / 3.0) + deltas[0] - deltas[2]
+      def calc_saturation(max_rgb, min_rgb, delta, lightness)
+        if lightness < 0.5
+          delta / (max_rgb + min_rgb)
         else
-          (2.0 / 3.0) + deltas[1] - deltas[0]
+          delta / (2 - max_rgb - min_rgb)
         end
-
-        hue += 1 if hue < 0
-        hue -= 1 if hue > 1
       end
-      from_fractions(hue, saturation, lightness)
-    end
 
-    def self.from_fractions(hue, saturation, lightness)
-      new(360 * hue, saturation, lightness)
+      def from_rgb(*rgb)
+        rgb.map!{ |c| c / 255.0 }
+        min_rgb, max_rgb = rgb.min, rgb.max
+        delta = max_rgb - min_rgb
+
+        lightness = (max_rgb + min_rgb) / 2.0
+
+        if delta < 1e-5
+          hue = saturation = 0
+        else
+          saturation = calc_saturation(max_rgb, min_rgb, delta, lightness)
+          deltas = rgb.map{ |c| (((max_rgb - c) / 6.0) + (delta / 2.0)) / delta }
+
+          hue = if (rgb[0] - max_rgb).abs < 1e-5
+            deltas[2] - deltas[1]
+          elsif (rgb[1] - max_rgb).abs < 1e-5
+            (1.0 / 3.0) + deltas[0] - deltas[2]
+          else
+            (2.0 / 3.0) + deltas[1] - deltas[0]
+          end
+
+          hue += 1 if hue < 0
+          hue -= 1 if hue > 1
+        end
+        from_fractions(hue, saturation, lightness)
+      end
+
+      def from_fractions(hue, saturation, lightness)
+        new(360 * hue, saturation, lightness)
+      end
     end
 
     def initialize(*hsl)
