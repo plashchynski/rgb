@@ -157,6 +157,22 @@ describe RGB::Color do
         expect(color.to_hsl).to be_eql [0, 0.45, 0.3]
       end
     end
+
+    describe :invert do
+      it 'should invert color (returns result as new object)' do
+        color = RGB::Color.new(0, 0, 1.0)
+        expect(color.invert.to_hsl).to be_eql [0, 0, 0.0]
+        expect(color.to_hsl).to be_eql [0, 0, 1.0]
+      end
+    end
+
+    describe :invert! do
+      it 'should invert color (make change in the object)' do
+        color = RGB::Color.new(0, 0, 1.0)
+        color.invert!
+        expect(color.to_hsl).to be_eql [0, 0, 0.0]
+      end
+    end
   end
 
   describe 'Output' do

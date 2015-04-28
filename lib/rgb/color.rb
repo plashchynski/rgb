@@ -135,9 +135,13 @@ module RGB
       @saturation *= (1.0 - (percentage / 100.0))
     end
 
+    def invert!
+      @hue, @saturation, @lightness = RGB::Color.from_rgb(*self.to_rgb.map{ |c| 255 - c }).to_hsl
+    end
+
     # define non-bang methods
     [:darken, :darken_percent, :lighten, :lighten_percent, :saturate, :saturate_percent, :desaturate,
-      :desaturate_percent].each do |method_name|
+      :desaturate_percent, :invert].each do |method_name|
         define_method method_name do |*args|
           dup.tap { |color| color.send(:"#{method_name}!", *args) }
         end
