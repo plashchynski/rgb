@@ -33,6 +33,14 @@ color.desaturate_percent(20)
 color.desaturate!(20)
 color.desaturate_percent!(20)
 
+color.invert!
+
+# Mixing colors:
+color.mix(other_color, 20) # Mix 20% of other color into current one
+color.mix(other_color) # 50% by default
+color.mix!(other_color, 20)
+color.mix!(other_color)
+
 # Also you can adjust color HSL (hue, saturation, and lightness values) manually:
 color.hue = 0.1
 color.saturation = 0.2

@@ -18,6 +18,10 @@ module RGB
       end
 
       def from_rgb(*rgb)
+        from_fractions(*rgb_to_hsl(*rgb))
+      end
+
+      def rgb_to_hsl(*rgb)
         rgb.map!{ |c| c / 255.0 }
         min_rgb, max_rgb = rgb.min, rgb.max
         delta = max_rgb - min_rgb
@@ -41,7 +45,7 @@ module RGB
           hue += 1 if hue < 0
           hue -= 1 if hue > 1
         end
-        from_fractions(hue, saturation, lightness)
+        [hue, saturation, lightness]
       end
 
       def from_fractions(hue, saturation, lightness)
@@ -139,9 +143,19 @@ module RGB
       @hue, @saturation, @lightness = RGB::Color.from_rgb(*self.to_rgb.map{ |c| 255 - c }).to_hsl
     end
 
+    # shamelessly stolen from
+    # https://github.com/chriseppstein/compass-colors/blob/master/lib/compass-colors/sass_extensions.rb#L86
+    # Though, I've inverted the coefficients, which seems more logical
+    def mix!(other, pct = 50.0)
+      coeff = pct.to_f / 100.0
+      new_rgb = to_rgb.zip(other.to_rgb).map{|c1, c2| (c1 * (1 - coeff)) + (c2 * coeff)}
+      h, s, l = self.class.rgb_to_hsl(*new_rgb)
+      self.hue, self.saturation, self.lightness = 360*h, s, l
+    end
+
     # define non-bang methods
     [:darken, :darken_percent, :lighten, :lighten_percent, :saturate, :saturate_percent, :desaturate,
-      :desaturate_percent, :invert].each do |method_name|
+      :desaturate_percent, :invert, :mix].each do |method_name|
         define_method method_name do |*args|
           dup.tap { |color| color.send(:"#{method_name}!", *args) }
         end
