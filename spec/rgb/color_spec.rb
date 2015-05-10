@@ -173,6 +173,31 @@ describe RGB::Color do
         expect(color.to_hsl).to be_eql [0, 0, 0.0]
       end
     end
+
+    describe :mix do
+      it 'should mix two colors' do
+        color1 = RGB::Color.from_rgb_hex('#1F77B4')
+        color2 = RGB::Color.from_rgb_hex('#D62728')
+
+        mix_50pct = color1.mix(color2)
+        mix_10pct = color1.mix(color2, 10)
+
+        expect(mix_50pct.to_rgb_hex).to be_eql '#7B4F6E'
+
+        expect(mix_10pct.to_rgb_hex).to be_eql '#316FA6'
+      end
+    end
+
+    describe :mix! do
+      it 'should mix other color in-place' do
+        color1 = RGB::Color.from_rgb_hex('#1F77B4')
+        color2 = RGB::Color.from_rgb_hex('#D62728')
+
+        color1.mix!(color2, 10)
+
+        expect(color1.to_rgb_hex).to be_eql '#316FA6'
+      end
+    end
   end
 
   describe 'Output' do
