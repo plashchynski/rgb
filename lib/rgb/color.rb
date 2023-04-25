@@ -1,6 +1,6 @@
 module RGB
   class Color
-    attr_reader :hue, :saturation, :lightness # HSL
+    attr_reader :hue, :saturation, :lightness # ? HSL
 
     class << self
       def from_rgb_hex(color)
@@ -74,15 +74,17 @@ module RGB
     end
 
     def to_hsl
-      [hue, saturation, lightness]
+      [hue.to_i, saturation.to_f, lightness.to_f]
+      # [((hue / 255) * 360).to_i, saturation.to_f, lightness.to_f]
     end
 
     def to_rgb_hex
-      "#" + to_rgb.map {|c| "%02X" % c }.join
+      '#' + to_rgb.map {|c| '%02X' % c }.join
     end
 
     def hue=(value)
       @hue = value % 360
+      check_hue()
     end
 
     def saturation=(value)
@@ -107,53 +109,61 @@ module RGB
 
     def lighten!(amount)
       @lightness += amount / 100.0
+      check_lightness()
     end
 
     def lighten_percent!(percentage)
       @lightness += (1 - @lightness) * (percentage / 100.0)
+      check_lightness()
     end
 
     def darken!(amount)
       @lightness -= (amount / 100.0)
       @lightness = 0 if @lightness < 0
-      @lightness
+      check_lightness()
     end
 
     def darken_percent!(percentage)
       @lightness *= 1.0 - (percentage / 100.0)
+      check_lightness()
     end
 
     def saturate!(amount)
       @saturation += amount / 100.0
+      check_saturation()
     end
 
     def saturate_percent!(percentage)
       @saturation += (1 - @saturation) * (percentage / 100.0)
+      check_saturation()
     end
 
     def desaturate!(amount)
       @saturation -= amount / 100.0
+      check_saturation()
     end
 
     def desaturate_percent!(percentage)
       @saturation *= (1.0 - (percentage / 100.0))
+      check_saturation()
     end
 
     def invert!
       @hue, @saturation, @lightness = RGB::Color.from_rgb(*self.to_rgb.map{ |c| 255 - c }).to_hsl
     end
 
-    # shamelessly stolen from
-    # https://github.com/chriseppstein/compass-colors/blob/master/lib/compass-colors/sass_extensions.rb#L86
-    # Though, I've inverted the coefficients, which seems more logical
+
+    # ? Shamelessly stolen from
+    # ? https://github.com/chriseppstein/compass-colors/blob/master/lib/compass-colors/sass_extensions.rb#L86
+    # ? Though, I've inverted the coefficients, which seems more logical
     def mix!(other, pct = 50.0)
       coeff = pct.to_f / 100.0
-      new_rgb = to_rgb.zip(other.to_rgb).map{|c1, c2| (c1 * (1 - coeff)) + (c2 * coeff)}
+      new_rgb = to_rgb.zip(other.to_rgb).map{ |c1, c2| (c1 * (1 - coeff)) + (c2 * coeff) }
       h, s, l = self.class.rgb_to_hsl(*new_rgb)
-      self.hue, self.saturation, self.lightness = 360*h, s, l
+      self.hue, self.saturation, self.lightness = 360 * h, s, l
     end
 
-    # define non-bang methods
+    # ? Define non-bang methods
     [:darken, :darken_percent, :lighten, :lighten_percent, :saturate, :saturate_percent, :desaturate,
       :desaturate_percent, :invert, :mix].each do |method_name|
         define_method method_name do |*args|
@@ -166,7 +176,7 @@ module RGB
       hue / 360.0
     end
 
-    # helper for making rgb
+    # ? Helper for making rgb
     def hue_to_rgb(m1, m2, h)
       h += 1 if h < 0
       h -= 1 if h > 1
@@ -174,6 +184,27 @@ module RGB
       return m2 if h * 2 < 1
       return m1 + (m2 - m1) * (2.0/3 - h) * 6 if h * 3 < 2
       return m1
+    end
+
+    # ? Method to ensure lightness value is valid (0-1)
+    def check_lightness
+      if @lightness > 1; @lightness = 1.0; end;
+      if @lightness < 0; @lightness = 0.0; end;
+      @lightness
+    end
+
+    # ? Method to ensure saturation value is valid (0-1)
+    def check_saturation
+      if @saturation > 1; @saturation = 1.0; end;
+      if @saturation < 0; @saturation = 0.0; end;
+      @saturation
+    end
+
+    # ? Method to ensure hue value is valid (0-360)
+    def check_hue
+      if @hue > 360; @hue = 360; end;
+      if @hue < 0;   @hue = 0;   end;
+      @hue
     end
   end
 end
