@@ -10,12 +10,13 @@ Gem::Specification.new do |spec|
   spec.email         = ['plashchynski@gmail.com']
 
   spec.description   = %q{A library built to handle the easy conversion, comparison and manipulation of colors with CSS-style hex color notation.}
-  spec.summary       = spec.description
+  spec.summary       = %q{A simple Ruby library built to handle easy conversion and manipulation of colors.}
   spec.homepage      = 'https://github.com/plashchynski/rgb'
   spec.license       = 'Apache-2.0'
 
   spec.files         = Dir.glob("{lib}/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) || f =~ %r{^(test|spec|features)/} }
   spec.require_paths = ['lib']
+  spec.required_ruby_version = '>= 2.7.0'
 
   spec.add_development_dependency 'bundler',   '~> 2.5.9'
   spec.add_development_dependency 'rake',      '~> 13.1.0'
