@@ -17,8 +17,8 @@ Gem::Specification.new do |spec|
   spec.files         = Dir.glob("{lib}/**/*", File::FNM_DOTMATCH).reject { |f| File.directory?(f) || f =~ %r{^(test|spec|features)/} }
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler',   '~> 2.4.12'
-  spec.add_development_dependency 'rake',      '~> 13.0.6'
-  spec.add_development_dependency 'rspec',     '~> 3.12.0'
+  spec.add_development_dependency 'bundler',   '~> 2.5.9'
+  spec.add_development_dependency 'rake',      '~> 13.1.0'
+  spec.add_development_dependency 'rspec',     '~> 3.13.0'
   spec.add_development_dependency 'simplecov', '~> 0.22.0'
 end

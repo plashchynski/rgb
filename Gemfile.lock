@@ -1,27 +1,27 @@
 PATH
   remote: .
   specs:
-    rgb (0.1.1)
+    rgb (0.1.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    diff-lcs (1.5.0)
+    diff-lcs (1.5.1)
     docile (1.4.0)
-    rake (13.0.6)
-    rspec (3.12.0)
-      rspec-core (~> 3.12.0)
-      rspec-expectations (~> 3.12.0)
-      rspec-mocks (~> 3.12.0)
-    rspec-core (3.12.2)
-      rspec-support (~> 3.12.0)
-    rspec-expectations (3.12.3)
+    rake (13.1.0)
+    rspec (3.13.0)
+      rspec-core (~> 3.13.0)
+      rspec-expectations (~> 3.13.0)
+      rspec-mocks (~> 3.13.0)
+    rspec-core (3.13.0)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-mocks (3.12.5)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.1)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.12.0)
-    rspec-support (3.12.0)
+      rspec-support (~> 3.13.0)
+    rspec-support (3.13.1)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
@@ -30,14 +30,16 @@ GEM
     simplecov_json_formatter (0.1.4)
 
 PLATFORMS
-  x86_64-darwin-22
+  arm64-darwin-23
+  ruby
+  x86_64-linux
 
 DEPENDENCIES
-  bundler (~> 2.4.12)
-  rake (~> 13.0.6)
+  bundler (~> 2.5.9)
+  rake (~> 13.1.0)
   rgb!
-  rspec (~> 3.12.0)
+  rspec (~> 3.13.0)
   simplecov (~> 0.22.0)
 
 BUNDLED WITH
-   2.4.12
+   2.5.9
